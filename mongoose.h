@@ -826,6 +826,7 @@ struct timeval {
 #define MG_ENABLE_TCPIP_DRIVER_INIT 1  // enabled built-in driver for
 #endif                                 // Mongoose built-in network stack
 
+<<<<<<< HEAD
 #ifndef MG_TCPIP_IP                      // e.g. MG_IPV4(192, 168, 0, 223)
 #define MG_TCPIP_IP MG_IPV4(0, 0, 0, 0)  // Default is 0.0.0.0 (DHCP)
 #endif
@@ -841,10 +842,29 @@ struct timeval {
 #ifndef MG_SET_MAC_ADDRESS
 #define MG_SET_MAC_ADDRESS(mac)
 #endif
+=======
+#ifndef MG_TCPIP_IP  // e.g. MG_IPV4(192, 168, 0, 223)
+#define MG_TCPIP_IP MG_IPV4(0, 0, 0, 0)  // or leave as 0 for DHCP
+#endif
+
+#ifndef MG_TCPIP_MASK
+#define MG_TCPIP_MASK MG_IPV4(255, 255, 255, 0)
+#endif
+
+#ifndef MG_TCPIP_GW
+#define MG_TCPIP_GW MG_IPV4(0, 0, 0, 1)
+#endif
+
+#define MG_MAC_ADDRESS_RANDOM { 0, 0, 0, 0, 0, 0 }
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 
 #ifndef MG_ENABLE_TCPIP_PRINT_DEBUG_STATS
 #define MG_ENABLE_TCPIP_PRINT_DEBUG_STATS 0
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 
 
 
@@ -1062,6 +1082,8 @@ bool mg_path_is_sane(const struct mg_str path);
 #define MG_U32(a, b, c, d)                                           \
   (((uint32_t) ((a) & 255) << 24) | ((uint32_t) ((b) & 255) << 16) | \
    ((uint32_t) ((c) & 255) << 8) | (uint32_t) ((d) & 255))
+
+#define MG_IPV4(a, b, c, d) mg_htonl(MG_U32(a, b, c, d))
 
 #define MG_IPV4(a, b, c, d) mg_htonl(MG_U32(a, b, c, d))
 
@@ -2832,8 +2854,19 @@ struct mg_profitem {
 #include "Driver_ETH_MAC.h"  // keep this include
 #include "Driver_ETH_PHY.h"  // keep this include
 
+#ifndef MG_MAC_ADDRESS
+#define MG_MAC_ADDRESS MG_MAC_ADDRESS_RANDOM
 #endif
 
+#define MG_TCPIP_DRIVER_DATA int driver_data;
+
+#define MG_TCPIP_DRIVER_CODE &mg_tcpip_driver_cmsis
+#define MG_TCPIP_DRIVER_NAME "cmsis"
+
+#endif
+
+
+#if MG_ENABLE_TCPIP && defined(MG_ENABLE_DRIVER_IMXRT) && MG_ENABLE_DRIVER_IMXRT
 
 #if MG_ENABLE_TCPIP && defined(MG_ENABLE_DRIVER_IMXRT) && MG_ENABLE_DRIVER_IMXRT
 
@@ -2854,6 +2887,13 @@ struct mg_tcpip_driver_imxrt_data {
   uint8_t phy_addr;  // PHY address
 };
 
+<<<<<<< HEAD
+=======
+#ifndef MG_MAC_ADDRESS
+#define MG_MAC_ADDRESS MG_MAC_ADDRESS_RANDOM
+#endif
+
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #ifndef MG_TCPIP_PHY_ADDR
 #define MG_TCPIP_PHY_ADDR 2
 #endif
@@ -2862,6 +2902,7 @@ struct mg_tcpip_driver_imxrt_data {
 #define MG_DRIVER_MDC_CR 24
 #endif
 
+<<<<<<< HEAD
 #define MG_TCPIP_DRIVER_INIT(mgr)                                \
   do {                                                           \
     static struct mg_tcpip_driver_imxrt_data driver_data_;       \
@@ -2911,6 +2952,16 @@ struct mg_tcpip_driver_ra_data {
   uint16_t irqno;    // IRQn, R_ICU->IELSR[irqno]
   uint8_t phy_addr;  // PHY address
 };
+=======
+#define MG_TCPIP_DRIVER_DATA                                \
+  static struct mg_tcpip_driver_imxrt_data driver_data = { \
+      .mdc_cr = MG_DRIVER_MDC_CR,                            \
+      .phy_addr = MG_TCPIP_PHY_ADDR,                        \
+  };
+
+#define MG_TCPIP_DRIVER_CODE &mg_tcpip_driver_imxrt
+#define MG_TCPIP_DRIVER_NAME "imxrt"
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 
 #endif
 
@@ -2921,10 +2972,28 @@ struct mg_tcpip_driver_same54_data {
     int mdc_cr;
 };
 
+<<<<<<< HEAD
+=======
+#ifndef MG_MAC_ADDRESS
+#define MG_MAC_ADDRESS MG_MAC_ADDRESS_RANDOM
+#endif
+
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #ifndef MG_DRIVER_MDC_CR
 #define MG_DRIVER_MDC_CR 5
 #endif
 
+<<<<<<< HEAD
+=======
+#define MG_TCPIP_DRIVER_DATA                                \
+  static struct mg_tcpip_driver_same54_data driver_data = { \
+      .mdc_cr = MG_DRIVER_MDC_CR,                            \
+  };
+
+#define MG_TCPIP_DRIVER_CODE &mg_tcpip_driver_same54
+#define MG_TCPIP_DRIVER_NAME "same54"
+
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #endif
 
 
@@ -2948,6 +3017,13 @@ struct mg_tcpip_driver_stm32f_data {
   uint8_t phy_addr;  // PHY address
 };
 
+<<<<<<< HEAD
+=======
+#ifndef MG_MAC_ADDRESS
+#define MG_MAC_ADDRESS MG_MAC_ADDRESS_RANDOM
+#endif
+
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #ifndef MG_TCPIP_PHY_ADDR
 #define MG_TCPIP_PHY_ADDR 0
 #endif
@@ -2956,6 +3032,7 @@ struct mg_tcpip_driver_stm32f_data {
 #define MG_DRIVER_MDC_CR 4
 #endif
 
+<<<<<<< HEAD
 #define MG_TCPIP_DRIVER_INIT(mgr)                                 \
   do {                                                            \
     static struct mg_tcpip_driver_stm32f_data driver_data_;       \
@@ -2971,6 +3048,16 @@ struct mg_tcpip_driver_stm32f_data {
     mg_tcpip_init(mgr, &mif_);                                    \
     MG_INFO(("Driver: stm32f, MAC: %M", mg_print_mac, mif_.mac)); \
   } while (0)
+=======
+#define MG_TCPIP_DRIVER_DATA                                \
+  static struct mg_tcpip_driver_stm32f_data driver_data = { \
+      .mdc_cr = MG_DRIVER_MDC_CR,                            \
+      .phy_addr = MG_TCPIP_PHY_ADDR,                        \
+  };
+
+#define MG_TCPIP_DRIVER_CODE &mg_tcpip_driver_stm32f
+#define MG_TCPIP_DRIVER_NAME "stm32f"
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 
 #endif
 
@@ -3003,14 +3090,20 @@ struct mg_tcpip_driver_stm32h_data {
   uint8_t phy_conf;  // PHY config
 };
 
+<<<<<<< HEAD
 #ifndef MG_TCPIP_PHY_ADDR
 #define MG_TCPIP_PHY_ADDR 0
+=======
+#ifndef MG_MAC_ADDRESS
+#define MG_MAC_ADDRESS MG_MAC_ADDRESS_RANDOM
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #endif
 
 #ifndef MG_DRIVER_MDC_CR
 #define MG_DRIVER_MDC_CR 4
 #endif
 
+<<<<<<< HEAD
 #define MG_TCPIP_DRIVER_INIT(mgr)                                 \
   do {                                                            \
     static struct mg_tcpip_driver_stm32h_data driver_data_;       \
@@ -3026,6 +3119,15 @@ struct mg_tcpip_driver_stm32h_data {
     mg_tcpip_init(mgr, &mif_);                                    \
     MG_INFO(("Driver: stm32h, MAC: %M", mg_print_mac, mif_.mac)); \
   } while (0)
+=======
+#define MG_TCPIP_DRIVER_DATA                                \
+  static struct mg_tcpip_driver_stm32h_data driver_data = { \
+      .mdc_cr = MG_DRIVER_MDC_CR,                            \
+  };
+
+#define MG_TCPIP_DRIVER_CODE &mg_tcpip_driver_stm32h
+#define MG_TCPIP_DRIVER_NAME "stm32h"
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 
 #endif
 #endif
@@ -3046,10 +3148,29 @@ struct mg_tcpip_driver_tm4c_data {
   int mdc_cr;  // Valid values: -1, 0, 1, 2, 3
 };
 
+<<<<<<< HEAD
+=======
+#ifndef MG_MAC_ADDRESS
+#define MG_MAC_ADDRESS MG_MAC_ADDRESS_RANDOM
+#endif
+
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #ifndef MG_DRIVER_MDC_CR
 #define MG_DRIVER_MDC_CR 1
 #endif
 
+<<<<<<< HEAD
+=======
+#define MG_TCPIP_DRIVER_DATA                                \
+  static struct mg_tcpip_driver_tm4c_data driver_data = { \
+      .mdc_cr = MG_DRIVER_MDC_CR,                            \
+  };
+
+#define MG_TCPIP_DRIVER_CODE &mg_tcpip_driver_tm4c
+#define MG_TCPIP_DRIVER_NAME "tm4c"
+
+
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #endif
 
 
@@ -3057,6 +3178,7 @@ struct mg_tcpip_driver_tm4c_data {
 
 #endif
 
+<<<<<<< HEAD
 
 #if MG_ENABLE_TCPIP && defined(MG_ENABLE_DRIVER_XMC7) && MG_ENABLE_DRIVER_XMC7
 
@@ -3139,6 +3261,8 @@ struct mg_tcpip_driver_xmc_data {
 
 #endif
 
+=======
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #ifdef __cplusplus
 }
 #endif

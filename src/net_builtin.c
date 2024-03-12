@@ -1160,4 +1160,22 @@ bool mg_send(struct mg_connection *c, const void *buf, size_t len) {
   }
   return res;
 }
+
+#if MG_ENABLE_TCPIP_DRIVER_INIT && defined(MG_TCPIP_DRIVER_DATA)
+void mg_tcpip_auto_init(struct mg_mgr *mgr);
+void mg_tcpip_auto_init(struct mg_mgr *mgr) {
+  MG_TCPIP_DRIVER_DATA  // static ... driver_data
+      struct mg_tcpip_if i = {
+          // let the compiler solve the macros at run time
+          .mac = MG_MAC_ADDRESS,          .ip = MG_TCPIP_IP,
+          .mask = MG_TCPIP_MASK,          .gw = MG_TCPIP_GW,
+          .driver = MG_TCPIP_DRIVER_CODE, .driver_data = &driver_data,
+      };
+  static struct mg_tcpip_if mif;
+
+  mif = i;  // copy the initialized structure to a static to be exported
+  mg_tcpip_init(mgr, &mif);
+  MG_INFO(("Driver: " MG_TCPIP_DRIVER_NAME ", MAC: %M", mg_print_mac, mif.mac));
+}
+#endif
 #endif  // MG_ENABLE_TCPIP

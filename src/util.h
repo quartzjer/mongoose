@@ -29,6 +29,8 @@ bool mg_path_is_sane(const struct mg_str path);
 
 #define MG_IPV4(a, b, c, d) mg_htonl(MG_U32(a, b, c, d))
 
+#define MG_IPV4(a, b, c, d) mg_htonl(MG_U32(a, b, c, d))
+
 // For printing IPv4 addresses: printf("%d.%d.%d.%d\n", MG_IPADDR_PARTS(&ip))
 #define MG_U8P(ADDR) ((uint8_t *) (ADDR))
 #define MG_IPADDR_PARTS(ADDR) \

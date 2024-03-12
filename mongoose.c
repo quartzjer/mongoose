@@ -4880,6 +4880,11 @@ void mg_mgr_free(struct mg_mgr *mgr) {
   mg_tls_ctx_free(mgr);
 }
 
+
+#if MG_ENABLE_TCPIP && MG_ENABLE_TCPIP_DRIVER_INIT
+void mg_tcpip_auto_init(struct mg_mgr *);
+#endif
+
 void mg_mgr_init(struct mg_mgr *mgr) {
   memset(mgr, 0, sizeof(*mgr));
 #if MG_ENABLE_EPOLL
@@ -4898,8 +4903,13 @@ void mg_mgr_init(struct mg_mgr *mgr) {
   // Ignore SIGPIPE signal, so if client cancels the request, it
   // won't kill the whole process.
   signal(SIGPIPE, SIG_IGN);
+<<<<<<< HEAD
 #elif MG_ENABLE_TCPIP_DRIVER_INIT && defined(MG_TCPIP_DRIVER_INIT)
   MG_TCPIP_DRIVER_INIT(mgr);
+=======
+#elif MG_ENABLE_TCPIP && MG_ENABLE_TCPIP_DRIVER_INIT
+  mg_tcpip_auto_init(mgr);
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #endif
   mgr->pipe = MG_INVALID_SOCKET;
   mgr->dnstimeout = 3000;
@@ -5805,7 +5815,11 @@ static void mg_tcpip_poll(struct mg_tcpip_if *ifp, uint64_t now) {
 #if MG_ENABLE_TCPIP_PRINT_DEBUG_STATS
   if (expired_1000ms) {
     const char *names[] = {"down", "up", "req", "ready"};
+<<<<<<< HEAD
     MG_INFO(("Status: %s, IP: %M, rx:%u, tx:%u, dr:%u, er:%u",
+=======
+    MG_INFO(("Ethernet: %s, IP: %M, rx:%u, tx:%u, dr:%u, er:%u",
+>>>>>>> a0834330 (Add driver init to mg_mgr_init())
              names[ifp->state], mg_print_ip4, &ifp->ip, ifp->nrecv, ifp->nsent,
              ifp->ndrop, ifp->nerr));
   }
@@ -6073,6 +6087,24 @@ bool mg_send(struct mg_connection *c, const void *buf, size_t len) {
   }
   return res;
 }
+
+#if MG_ENABLE_TCPIP_DRIVER_INIT && defined(MG_TCPIP_DRIVER_DATA)
+void mg_tcpip_auto_init(struct mg_mgr *mgr);
+void mg_tcpip_auto_init(struct mg_mgr *mgr) {
+  MG_TCPIP_DRIVER_DATA  // static ... driver_data
+      struct mg_tcpip_if i = {
+          // let the compiler solve the macros at run time
+          .mac = MG_MAC_ADDRESS,          .ip = MG_TCPIP_IP,
+          .mask = MG_TCPIP_MASK,          .gw = MG_TCPIP_GW,
+          .driver = MG_TCPIP_DRIVER_CODE, .driver_data = &driver_data,
+      };
+  static struct mg_tcpip_if mif;
+
+  mif = i;  // copy the initialized structure to a static to be exported
+  mg_tcpip_init(mgr, &mif);
+  MG_INFO(("Driver: " MG_TCPIP_DRIVER_NAME ", MAC: %M", mg_print_mac, mif.mac));
+}
+#endif
 #endif  // MG_ENABLE_TCPIP
 
 #ifdef MG_ENABLE_LINES
