@@ -4903,13 +4903,8 @@ void mg_mgr_init(struct mg_mgr *mgr) {
   // Ignore SIGPIPE signal, so if client cancels the request, it
   // won't kill the whole process.
   signal(SIGPIPE, SIG_IGN);
-<<<<<<< HEAD
 #elif MG_ENABLE_TCPIP_DRIVER_INIT && defined(MG_TCPIP_DRIVER_INIT)
   MG_TCPIP_DRIVER_INIT(mgr);
-=======
-#elif MG_ENABLE_TCPIP && MG_ENABLE_TCPIP_DRIVER_INIT
-  mg_tcpip_auto_init(mgr);
->>>>>>> a0834330 (Add driver init to mg_mgr_init())
 #endif
   mgr->pipe = MG_INVALID_SOCKET;
   mgr->dnstimeout = 3000;
@@ -5815,11 +5810,7 @@ static void mg_tcpip_poll(struct mg_tcpip_if *ifp, uint64_t now) {
 #if MG_ENABLE_TCPIP_PRINT_DEBUG_STATS
   if (expired_1000ms) {
     const char *names[] = {"down", "up", "req", "ready"};
-<<<<<<< HEAD
     MG_INFO(("Status: %s, IP: %M, rx:%u, tx:%u, dr:%u, er:%u",
-=======
-    MG_INFO(("Ethernet: %s, IP: %M, rx:%u, tx:%u, dr:%u, er:%u",
->>>>>>> a0834330 (Add driver init to mg_mgr_init())
              names[ifp->state], mg_print_ip4, &ifp->ip, ifp->nrecv, ifp->nsent,
              ifp->ndrop, ifp->nerr));
   }
