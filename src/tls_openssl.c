@@ -144,7 +144,10 @@ void mg_tls_init(struct mg_connection *c, const struct mg_tls_opts *opts) {
   SSL_CTX_set_keylog_callback(tls->ctx, ssl_keylog_cb);
 #endif
   if ((tls->ssl = SSL_new(tls->ctx)) == NULL) {
+    unsigned long err;
     mg_error(c, "SSL_new");
+    while ((err = ERR_get_error()) != 0)
+      MG_ERROR(("%lu %s", c->id, ERR_error_string(err, NULL)));
     goto fail;
   }
   SSL_set_session_id_context(tls->ssl, (const uint8_t *) id,
